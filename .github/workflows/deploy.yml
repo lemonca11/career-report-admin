@@ -29,6 +29,13 @@ jobs:
       - name: Build
         run: npm run build
       
+      - name: Create Cloudflare Pages Project
+        run: |
+          curl -X POST "https://api.cloudflare.com/client/v4/accounts/fe083152986908eac23b83907701299b/pages/projects" \
+            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"name":"career-report-admin","production_branch":"main"}' || true
+      
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/pages-action@v1
         with:
