@@ -40,3 +40,7 @@ npm run build
 
 - [PRD文档](https://jcnt12gppms0.feishu.cn/docx/HhAwdxe89oHJLNx2gSBc8D4On8f)
 - [管理后台PRD](https://jcnt12gppms0.feishu.cn/docx/Af6FdbjWKovdGExAVuPcotFJnDe)
+
+---
+
+*Deployed on Cloudflare Pages*
