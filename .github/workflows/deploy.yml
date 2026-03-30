@@ -1,18 +1,22 @@
-name: Deploy to Cloudflare Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      deployments: write
-    
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -29,18 +33,14 @@ jobs:
       - name: Build
         run: npm run build
       
-      - name: Create Cloudflare Pages Project
-        run: |
-          curl -X POST "https://api.cloudflare.com/client/v4/accounts/fe083152986908eac23b83907701299b/pages/projects" \
-            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d '{"name":"career-report-admin","production_branch":"main"}' || true
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
       
-      - name: Deploy to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: fe083152986908eac23b83907701299b
-          projectName: career-report-admin
-          directory: dist
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          path: './dist'
+      
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

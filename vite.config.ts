@@ -9,7 +9,7 @@ export default defineConfig(({ mode }) => ({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
-  base: mode === 'production' ? '/' : '/',
+  base: mode === 'production' ? '/career-report-admin/' : '/',
   server: {
     port: 5173,
     host: '0.0.0.0',
