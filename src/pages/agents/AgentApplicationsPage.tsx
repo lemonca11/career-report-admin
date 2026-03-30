@@ -1,5 +1,5 @@
 import { CheckCircleOutlined, CloseCircleOutlined, EyeOutlined } from '@ant-design/icons';
-import { Button, Card, Input, Modal, Select, Space, Table, Typography, message } from 'antd';
+import { Button, Card, Input, Modal, Select, Space, Table, Typography, message, Form } from 'antd';
 import type { TableColumnsType } from 'antd';
 import React from 'react';
 
@@ -15,6 +15,13 @@ const AgentApplicationsPage = () => {
   const [keyword, setKeyword] = React.useState('');
   const [statusFilter, setStatusFilter] = React.useState<string>('全部');
   const [levelFilter, setLevelFilter] = React.useState<string>('全部');
+  
+  // 驳回弹窗状态
+  const [rejectModalVisible, setRejectModalVisible] = React.useState(false);
+  const [rejectLoading, setRejectLoading] = React.useState(false);
+  const [currentRecord, setCurrentRecord] = React.useState<AgentApplication | null>(null);
+  const [rejectReason, setRejectReason] = React.useState('');
+  const [form] = Form.useForm();
 
   const filteredData = applications.filter((item) => {
     const matchesKeyword =
@@ -27,21 +34,47 @@ const AgentApplicationsPage = () => {
     return matchesKeyword && matchesStatus && matchesLevel;
   });
 
-  const handleReview = (record: AgentApplication, approved: boolean) => {
+  const handleApprove = (record: AgentApplication) => {
     Modal.confirm({
-      title: approved ? '确认通过该代理申请？' : '确认驳回该代理申请？',
+      title: '确认通过该代理申请？',
       content: `${record.applicantName} / ${record.region} / ${record.levelRequested}`,
-      okText: approved ? '通过' : '驳回',
+      okText: '通过',
       cancelText: '取消',
       onOk: () => {
-        if (approved) {
-          approveApplication(record.id);
-        } else {
-          rejectApplication(record.id, '资质不符合要求');
-        }
-        message.success(`已${approved ? '通过' : '驳回'}申请`);
+        approveApplication(record.id);
+        message.success('已通过申请');
       },
     });
+  };
+
+  const handleRejectClick = (record: AgentApplication) => {
+    setCurrentRecord(record);
+    setRejectReason('');
+    form.resetFields();
+    setRejectModalVisible(true);
+  };
+
+  const handleRejectConfirm = async () => {
+    try {
+      await form.validateFields();
+      if (!currentRecord) return;
+      
+      setRejectLoading(true);
+      rejectApplication(currentRecord.id, rejectReason);
+      message.success('已驳回申请');
+      setRejectModalVisible(false);
+      setCurrentRecord(null);
+      setRejectReason('');
+    } finally {
+      setRejectLoading(false);
+    }
+  };
+
+  const handleRejectCancel = () => {
+    setRejectModalVisible(false);
+    setCurrentRecord(null);
+    setRejectReason('');
+    form.resetFields();
   };
 
   const columns: TableColumnsType<AgentApplication> = [
@@ -120,7 +153,7 @@ const AgentApplicationsPage = () => {
                 size="small"
                 type="primary"
                 icon={<CheckCircleOutlined />}
-                onClick={() => handleReview(record, true)}
+                onClick={() => handleApprove(record)}
               >
                 通过
               </Button>
@@ -128,7 +161,7 @@ const AgentApplicationsPage = () => {
                 size="small"
                 danger
                 icon={<CloseCircleOutlined />}
-                onClick={() => handleReview(record, false)}
+                onClick={() => handleRejectClick(record)}
               >
                 驳回
               </Button>
@@ -172,6 +205,42 @@ const AgentApplicationsPage = () => {
           scroll={{ x: 1100 }}
         />
       </Card>
+
+      {/* 驳回弹窗 */}
+      <Modal
+        title="驳回代理申请"
+        open={rejectModalVisible}
+        onOk={handleRejectConfirm}
+        onCancel={handleRejectCancel}
+        okText="确认驳回"
+        cancelText="取消"
+        confirmLoading={rejectLoading}
+        okButtonProps={{ danger: true }}
+      >
+        {currentRecord && (
+          <div style={{ marginBottom: 16 }}>
+            <p><strong>申请人：</strong>{currentRecord.applicantName}</p>
+            <p><strong>区域：</strong>{currentRecord.region}</p>
+            <p><strong>申请级别：</strong>{currentRecord.levelRequested}</p>
+          </div>
+        )}
+        <Form form={form} layout="vertical">
+          <Form.Item
+            label="驳回理由"
+            name="reason"
+            rules={[{ required: true, message: '请输入驳回理由' }]}
+          >
+            <Input.TextArea
+              rows={4}
+              placeholder="请输入驳回理由（如：资质不符合要求、区域已有代理等）"
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              maxLength={200}
+              showCount
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 };
