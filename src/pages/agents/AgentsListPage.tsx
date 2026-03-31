@@ -1,4 +1,4 @@
-import { PauseCircleOutlined, PlusOutlined, RightCircleOutlined } from '@ant-design/icons';
+import { PlusOutlined, RightCircleOutlined } from '@ant-design/icons';
 import {
   Button,
   Card,
@@ -16,7 +16,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import PageTitle from '@/components/PageTitle';
-import StatusTag from '@/components/StatusTag';
+
 import { useAgentStore } from '@/store';
 import type { Agent } from '@/types/agent';
 
@@ -26,8 +26,7 @@ const AgentsListPage = () => {
   const grantQuota = useAgentStore((state) => state.grantQuota);
   const toggleAgentStatus = useAgentStore((state) => state.toggleAgentStatus);
   const [keyword, setKeyword] = React.useState('');
-  const [statusFilter, setStatusFilter] = React.useState<string>('全部');
-  const [levelFilter, setLevelFilter] = React.useState<string>('全部');
+  const [levelFilter, setLevelFilter] = React.useState<string | undefined>(undefined);
   const [issueTarget, setIssueTarget] = React.useState<Agent | null>(null);
   const [form] = Form.useForm();
 
@@ -38,9 +37,8 @@ const AgentsListPage = () => {
       item.region.includes(keyword) ||
       item.contact.includes(keyword) ||
       item.code.includes(keyword);
-    const matchesStatus = statusFilter === '全部' || item.status === statusFilter;
-    const matchesLevel = levelFilter === '全部' || item.level === levelFilter;
-    return matchesKeyword && matchesStatus && matchesLevel;
+    const matchesLevel = !levelFilter || item.level === levelFilter;
+    return matchesKeyword && matchesLevel;
   });
 
   const openIssueModal = (agent: Agent) => {
@@ -77,18 +75,15 @@ const AgentsListPage = () => {
     {
       title: '代理名称',
       dataIndex: 'name',
-      width: 180,
       sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
       title: '编码',
       dataIndex: 'code',
-      width: 150,
     },
     {
       title: '级别',
       dataIndex: 'level',
-      width: 120,
       filters: [
         { text: '省级代理', value: '省级代理' },
         { text: '城市代理', value: '城市代理' },
@@ -99,41 +94,29 @@ const AgentsListPage = () => {
     {
       title: '所属区域',
       dataIndex: 'region',
-      width: 150,
     },
     {
       title: '联系人',
       dataIndex: 'contact',
-      width: 100,
     },
     {
       title: '团队规模',
       dataIndex: 'teamSize',
-      width: 110,
       sorter: (a, b) => a.teamSize - b.teamSize,
     },
     {
       title: '当前额度',
       dataIndex: 'quotaBalance',
-      width: 120,
       sorter: (a, b) => a.quotaBalance - b.quotaBalance,
     },
     {
       title: '总订单数',
       dataIndex: 'totalOrders',
-      width: 120,
       sorter: (a, b) => a.totalOrders - b.totalOrders,
-    },
-    {
-      title: '状态',
-      dataIndex: 'status',
-      width: 100,
-      render: (value) => <StatusTag value={value} />,
     },
     {
       title: '操作',
       key: 'action',
-      width: 260,
       render: (_, record) => (
         <Space wrap>
           <Button size="small" type="link" onClick={() => navigate(`/agents/${record.id}`)}>
@@ -141,9 +124,6 @@ const AgentsListPage = () => {
           </Button>
           <Button size="small" icon={<PlusOutlined />} onClick={() => openIssueModal(record)}>
             发放额度
-          </Button>
-          <Button size="small" icon={<PauseCircleOutlined />} onClick={() => handleToggleStatus(record)}>
-            {record.status === '启用' ? '停用' : '启用'}
           </Button>
         </Space>
       ),
@@ -173,14 +153,14 @@ const AgentsListPage = () => {
           <Select
             style={{ width: 160 }}
             value={levelFilter}
-            onChange={setLevelFilter}
-            options={['全部', '省级代理', '城市代理', '校园合伙人'].map((value) => ({ label: value, value }))}
-          />
-          <Select
-            style={{ width: 160 }}
-            value={statusFilter}
-            onChange={setStatusFilter}
-            options={['全部', '启用', '停用'].map((value) => ({ label: value, value }))}
+            placeholder="申请级别"
+            allowClear
+            onChange={(value) => setLevelFilter(value || undefined)}
+            options={[
+              { label: '省级代理', value: '省级代理' },
+              { label: '城市代理', value: '城市代理' },
+              { label: '校园合伙人', value: '校园合伙人' },
+            ]}
           />
         </div>
         <Table
@@ -188,7 +168,6 @@ const AgentsListPage = () => {
           columns={columns}
           dataSource={filteredData}
           pagination={{ pageSize: 6, showSizeChanger: false }}
-          scroll={{ x: 1400 }}
         />
       </Card>
 
