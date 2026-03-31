@@ -13,8 +13,8 @@ const AgentApplicationsPage = () => {
   const approveApplication = useAgentStore((state) => state.approveApplication);
   const rejectApplication = useAgentStore((state) => state.rejectApplication);
   const [keyword, setKeyword] = React.useState('');
-  const [statusFilter, setStatusFilter] = React.useState<string>('全部');
-  const [levelFilter, setLevelFilter] = React.useState<string>('全部');
+  const [statusFilter, setStatusFilter] = React.useState<string>('审核状态');
+  const [levelFilter, setLevelFilter] = React.useState<string>('申请级别');
   
   // 驳回弹窗状态
   const [rejectModalVisible, setRejectModalVisible] = React.useState(false);
@@ -29,10 +29,19 @@ const AgentApplicationsPage = () => {
       item.applicantName.includes(keyword) ||
       item.company.includes(keyword) ||
       item.region.includes(keyword);
-    const matchesStatus = statusFilter === '全部' || item.status === statusFilter;
-    const matchesLevel = levelFilter === '全部' || item.levelRequested === levelFilter;
+    const matchesStatus = statusFilter === '审核状态' || item.status === statusFilter;
+    const matchesLevel = levelFilter === '申请级别' || item.levelRequested === levelFilter;
     return matchesKeyword && matchesStatus && matchesLevel;
   });
+
+  // 处理筛选器选择变化
+  const handleStatusChange = (value: string) => {
+    setStatusFilter(value);
+  };
+
+  const handleLevelChange = (value: string) => {
+    setLevelFilter(value);
+  };
 
   const handleApprove = (record: AgentApplication) => {
     Modal.confirm({
@@ -113,13 +122,6 @@ const AgentApplicationsPage = () => {
       onFilter: (value, record) => record.levelRequested === value,
     },
     {
-      title: '经验',
-      dataIndex: 'experienceYears',
-      width: 100,
-      sorter: (a, b) => a.experienceYears - b.experienceYears,
-      render: (value) => `${value} 年`,
-    },
-    {
       title: '提交时间',
       dataIndex: 'submittedAt',
       width: 170,
@@ -187,14 +189,24 @@ const AgentApplicationsPage = () => {
           <Select
             style={{ width: 160 }}
             value={statusFilter}
-            onChange={setStatusFilter}
-            options={['全部', '待审核', '已通过', '已驳回'].map((value) => ({ label: value, value }))}
+            onChange={handleStatusChange}
+            options={[
+              { label: '审核状态', value: '审核状态' },
+              { label: '待审核', value: '待审核' },
+              { label: '已通过', value: '已通过' },
+              { label: '已驳回', value: '已驳回' },
+            ]}
           />
           <Select
             style={{ width: 160 }}
             value={levelFilter}
-            onChange={setLevelFilter}
-            options={['全部', '省级代理', '城市代理', '校园合伙人'].map((value) => ({ label: value, value }))}
+            onChange={handleLevelChange}
+            options={[
+              { label: '申请级别', value: '申请级别' },
+              { label: '省级代理', value: '省级代理' },
+              { label: '城市代理', value: '城市代理' },
+              { label: '校园合伙人', value: '校园合伙人' },
+            ]}
           />
         </div>
         <Table
