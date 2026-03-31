@@ -30,7 +30,7 @@ const AgentDetailPage = () => {
   const orderRecords = orders.filter((item) => item.agentId === agent.id);
 
   const teamColumns: TableColumnsType<Agent> = [
-    { title: '团队名称', dataIndex: 'name' },
+    { title: '团队名称', dataIndex: 'name', ellipsis: true },
     { title: '级别', dataIndex: 'level', render: (value) => <StatusTag value={value} /> },
     { title: '联系人', dataIndex: 'contact' },
     { title: '额度余额', dataIndex: 'quotaBalance' },
@@ -38,21 +38,21 @@ const AgentDetailPage = () => {
   ];
 
   const quotaColumns: TableColumnsType<QuotaLog> = [
-    { title: '时间', dataIndex: 'createdAt', width: 170 },
-    { title: '类型', dataIndex: 'type', width: 90, render: (value) => <StatusTag value={value} /> },
-    { title: '数量', dataIndex: 'amount', width: 100 },
-    { title: '操作人', dataIndex: 'operator', width: 140 },
-    { title: '备注', dataIndex: 'remark' },
-    { title: '余额', dataIndex: 'balanceAfter', width: 100 },
+    { title: '时间', dataIndex: 'createdAt' },
+    { title: '类型', dataIndex: 'type', render: (value) => <StatusTag value={value} /> },
+    { title: '数量', dataIndex: 'amount' },
+    { title: '操作人', dataIndex: 'operator' },
+    { title: '备注', dataIndex: 'remark', ellipsis: true },
+    { title: '余额', dataIndex: 'balanceAfter' },
   ];
 
   const orderColumns: TableColumnsType<Order> = [
-    { title: '订单号', dataIndex: 'orderNo', width: 150 },
-    { title: '用户', dataIndex: 'userName', width: 110 },
-    { title: '产品', dataIndex: 'productName', width: 180 },
-    { title: '金额', dataIndex: 'amount', width: 100, render: (value) => `¥${value}` },
-    { title: '状态', dataIndex: 'status', width: 110, render: (value) => <StatusTag value={value} /> },
-    { title: '下单时间', dataIndex: 'createdAt', width: 170 },
+    { title: '订单号', dataIndex: 'orderNo', ellipsis: true },
+    { title: '用户', dataIndex: 'userName' },
+    { title: '产品', dataIndex: 'productName', ellipsis: true },
+    { title: '金额', dataIndex: 'amount', render: (value) => `¥${value}` },
+    { title: '状态', dataIndex: 'status', render: (value) => <StatusTag value={value} /> },
+    { title: '下单时间', dataIndex: 'createdAt' },
   ];
 
   return (
@@ -76,16 +76,9 @@ const AgentDetailPage = () => {
               <Descriptions.Item label="所属区域">{agent.region}</Descriptions.Item>
               <Descriptions.Item label="联系人">{agent.contact}</Descriptions.Item>
               <Descriptions.Item label="联系电话">{agent.phone}</Descriptions.Item>
-              <Descriptions.Item label="邮箱">{agent.email}</Descriptions.Item>
               <Descriptions.Item label="上级代理">{agent.parentName || '无'}</Descriptions.Item>
-              <Descriptions.Item label="状态">
-                <StatusTag value={agent.status} />
-              </Descriptions.Item>
               <Descriptions.Item label="机构名称">{agent.company}</Descriptions.Item>
               <Descriptions.Item label="加入时间">{agent.joinedAt}</Descriptions.Item>
-              <Descriptions.Item label="办公地址" span={2}>
-                {agent.address}
-              </Descriptions.Item>
             </Descriptions>
           </Card>
         </Col>
@@ -114,7 +107,7 @@ const AgentDetailPage = () => {
         <Col xs={24}>
           <Card className="section-card" title="下级团队">
             {subTeam.length ? (
-              <Table rowKey="id" columns={teamColumns} dataSource={subTeam} pagination={false} scroll={{ x: 760 }} />
+              <Table rowKey="id" columns={teamColumns} dataSource={subTeam} pagination={false} />
             ) : (
               <Empty description="暂无下级团队" />
             )}
@@ -127,7 +120,6 @@ const AgentDetailPage = () => {
               columns={quotaColumns}
               dataSource={quotaRecords}
               pagination={{ pageSize: 5, showSizeChanger: false }}
-              scroll={{ x: 860 }}
             />
           </Card>
         </Col>
@@ -138,7 +130,6 @@ const AgentDetailPage = () => {
               columns={orderColumns}
               dataSource={orderRecords}
               pagination={{ pageSize: 5, showSizeChanger: false }}
-              scroll={{ x: 860 }}
             />
           </Card>
         </Col>
