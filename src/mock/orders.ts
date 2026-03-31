@@ -8,9 +8,10 @@ const reportTypes = ['职业画像 + 岗位匹配', '升学与就业双通道分
 const careerGoals = ['互联网产品岗', '金融分析岗', '选调生 / 公职', '品牌与内容方向', '制造业管培生'];
 const industryTargets = ['互联网', '金融', '教育', '新能源', '消费品'];
 
-export const ordersMock: Order[] = Array.from({ length: 25 }, (_, index) => {
+export const ordersMock: Order[] = Array.from({ length: 30 }, (_, index) => {
   const user = usersMock[index % usersMock.length];
-  const agent = agentsMock[(index * 2 + 3) % agentsMock.length];
+  // 确保每个代理都有订单，按顺序分配
+  const agent = agentsMock[index % agentsMock.length];
   const status = statusCycle[index % statusCycle.length];
   const amount = index % 3 === 1 ? 299 : index % 3 === 2 ? 399 : 199;
   const createdDay = 29 - (index % 14);
