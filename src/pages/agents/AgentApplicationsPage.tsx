@@ -13,8 +13,8 @@ const AgentApplicationsPage = () => {
   const approveApplication = useAgentStore((state) => state.approveApplication);
   const rejectApplication = useAgentStore((state) => state.rejectApplication);
   const [keyword, setKeyword] = React.useState('');
-  const [statusFilter, setStatusFilter] = React.useState<string>('审核状态');
-  const [levelFilter, setLevelFilter] = React.useState<string>('申请级别');
+  const [statusFilter, setStatusFilter] = React.useState<string | undefined>(undefined);
+  const [levelFilter, setLevelFilter] = React.useState<string | undefined>(undefined);
   
   // 驳回弹窗状态
   const [rejectModalVisible, setRejectModalVisible] = React.useState(false);
@@ -29,18 +29,18 @@ const AgentApplicationsPage = () => {
       item.applicantName.includes(keyword) ||
       item.company.includes(keyword) ||
       item.region.includes(keyword);
-    const matchesStatus = statusFilter === '审核状态' || item.status === statusFilter;
-    const matchesLevel = levelFilter === '申请级别' || item.levelRequested === levelFilter;
+    const matchesStatus = !statusFilter || item.status === statusFilter;
+    const matchesLevel = !levelFilter || item.levelRequested === levelFilter;
     return matchesKeyword && matchesStatus && matchesLevel;
   });
 
   // 处理筛选器选择变化
   const handleStatusChange = (value: string) => {
-    setStatusFilter(value);
+    setStatusFilter(value || undefined);
   };
 
   const handleLevelChange = (value: string) => {
-    setLevelFilter(value);
+    setLevelFilter(value || undefined);
   };
 
   const handleApprove = (record: AgentApplication) => {
@@ -90,18 +90,19 @@ const AgentApplicationsPage = () => {
     {
       title: '申请人',
       dataIndex: 'applicantName',
-      width: 120,
+      width: 100,
       sorter: (a, b) => a.applicantName.localeCompare(b.applicantName),
     },
     {
       title: '机构名称',
       dataIndex: 'company',
+      width: 140,
       ellipsis: true,
     },
     {
       title: '申请区域',
       dataIndex: 'region',
-      width: 120,
+      width: 100,
       filters: [
         { text: '上海', value: '上海' },
         { text: '杭州', value: '杭州' },
@@ -113,7 +114,7 @@ const AgentApplicationsPage = () => {
     {
       title: '申请级别',
       dataIndex: 'levelRequested',
-      width: 130,
+      width: 110,
       filters: [
         { text: '省级代理', value: '省级代理' },
         { text: '城市代理', value: '城市代理' },
@@ -124,19 +125,19 @@ const AgentApplicationsPage = () => {
     {
       title: '提交时间',
       dataIndex: 'submittedAt',
-      width: 170,
+      width: 160,
       sorter: (a, b) => a.submittedAt.localeCompare(b.submittedAt),
     },
     {
       title: '状态',
       dataIndex: 'status',
-      width: 110,
+      width: 100,
       render: (value) => <StatusTag value={value} />,
     },
     {
       title: '操作',
       key: 'action',
-      width: 220,
+      width: 200,
       render: (_, record) => (
         <Space wrap>
           <Button
@@ -189,9 +190,10 @@ const AgentApplicationsPage = () => {
           <Select
             style={{ width: 160 }}
             value={statusFilter}
+            placeholder="审核状态"
+            allowClear
             onChange={handleStatusChange}
             options={[
-              { label: '审核状态', value: '审核状态' },
               { label: '待审核', value: '待审核' },
               { label: '已通过', value: '已通过' },
               { label: '已驳回', value: '已驳回' },
@@ -200,9 +202,10 @@ const AgentApplicationsPage = () => {
           <Select
             style={{ width: 160 }}
             value={levelFilter}
+            placeholder="申请级别"
+            allowClear
             onChange={handleLevelChange}
             options={[
-              { label: '申请级别', value: '申请级别' },
               { label: '省级代理', value: '省级代理' },
               { label: '城市代理', value: '城市代理' },
               { label: '校园合伙人', value: '校园合伙人' },
@@ -214,7 +217,7 @@ const AgentApplicationsPage = () => {
           columns={columns}
           dataSource={filteredData}
           pagination={{ pageSize: 6, showSizeChanger: false }}
-          scroll={{ x: 1100 }}
+          scroll={{ x: 1000 }}
         />
       </Card>
 
