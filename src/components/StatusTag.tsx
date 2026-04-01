@@ -3,16 +3,11 @@ import type { AgentLevel, ApplicationStatus, OrderStatus, AgentStatus } from '..
 
 export const LevelTag = ({ level }: { level: AgentLevel }) => {
   const colors: Record<AgentLevel, string> = {
-    strategic: 'purple',
-    city: 'blue',
-    campus: 'green',
+    '战略代理': 'purple',
+    '城市代理': 'blue',
+    '校园代理': 'green',
   };
-  const labels: Record<AgentLevel, string> = {
-    strategic: '战略代理',
-    city: '城市代理',
-    campus: '校园代理',
-  };
-  return <Tag color={colors[level]}>{labels[level]}</Tag>;
+  return <Tag color={colors[level]}>{level}</Tag>;
 };
 
 export const ApplicationStatusTag = ({ status }: { status: ApplicationStatus }) => {

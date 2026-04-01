@@ -1,4 +1,4 @@
-export type AgentLevel = '省级代理' | '城市代理' | '校园合伙人';
+export type AgentLevel = '战略代理' | '城市代理' | '校园代理';
 export type AgentStatus = '启用' | '停用';
 export type AgentApplicationStatus = '待审核' | '已通过' | '已驳回';
 export type QuotaLogType = '发放' | '扣减';
@@ -36,6 +36,7 @@ export interface Agent {
   quotaBalance: number;
   totalIssued: number;
   totalOrders: number;
+  totalIncome: number; // 累计收益
   status: AgentStatus;
   joinedAt: string;
   lastOrderAt: string;

@@ -1,5 +1,5 @@
-import { ArrowLeftOutlined } from '@ant-design/icons';
-import { Button, Card, Col, Descriptions, Empty, Row, Space, Statistic, Table } from 'antd';
+import { ArrowLeftOutlined, TeamOutlined, WalletOutlined, ShoppingCartOutlined, DollarCircleOutlined } from '@ant-design/icons';
+import { Button, Card, Col, Descriptions, Empty, Row, Space, Statistic, Table, theme } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -12,6 +12,7 @@ import type { Order } from '@/types/order';
 const AgentDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { token } = theme.useToken();
   const agents = useAgentStore((state) => state.agents);
   const quotaLogs = useQuotaStore((state) => state.logs);
   const orders = useOrderStore((state) => state.orders);
@@ -67,6 +68,21 @@ const AgentDetailPage = () => {
     { title: '下单时间', dataIndex: 'createdAt' },
   ];
 
+  // 统计卡片样式
+  const statCardStyle = (color: string) => ({
+    background: `linear-gradient(135deg, ${color}15 0%, ${color}08 100%)`,
+    borderRadius: token.borderRadiusLG,
+    border: `1px solid ${color}20`,
+  });
+
+  const statIconStyle = (color: string) => ({
+    fontSize: 24,
+    color: color,
+    background: `${color}15`,
+    padding: 8,
+    borderRadius: 12,
+  });
+
   return (
     <div className="page-container">
       <PageTitle
@@ -96,19 +112,53 @@ const AgentDetailPage = () => {
         </Col>
         <Col xs={24} xl={8}>
           <Row gutter={[16, 16]}>
-            <Col span={24}>
-              <Card className="section-card">
-                <Statistic title="团队规模" value={agent.teamSize} suffix="人" />
+            <Col span={12}>
+              <Card className="section-card" style={statCardStyle('#722ed1')} bodyStyle={{ padding: 16 }}>
+                <Space direction="vertical" size="small" style={{ width: '100%' }}>
+                  <Space>
+                    <TeamOutlined style={statIconStyle('#722ed1')} />
+                    <span style={{ color: token.colorTextSecondary, fontSize: 14 }}>团队规模</span>
+                  </Space>
+                  <Statistic value={agent.teamSize} suffix="人" valueStyle={{ fontSize: 28, fontWeight: 600, color: '#722ed1' }} />
+                </Space>
               </Card>
             </Col>
-            <Col span={24}>
-              <Card className="section-card">
-                <Statistic title="当前额度余额" value={agent.quotaBalance} />
+            <Col span={12}>
+              <Card className="section-card" style={statCardStyle('#1890ff')} bodyStyle={{ padding: 16 }}>
+                <Space direction="vertical" size="small" style={{ width: '100%' }}>
+                  <Space>
+                    <WalletOutlined style={statIconStyle('#1890ff')} />
+                    <span style={{ color: token.colorTextSecondary, fontSize: 14 }}>额度余额</span>
+                  </Space>
+                  <Statistic value={agent.quotaBalance} valueStyle={{ fontSize: 28, fontWeight: 600, color: '#1890ff' }} />
+                </Space>
               </Card>
             </Col>
-            <Col span={24}>
-              <Card className="section-card">
-                <Statistic title="累计订单数" value={agent.totalOrders} />
+            <Col span={12}>
+              <Card className="section-card" style={statCardStyle('#52c41a')} bodyStyle={{ padding: 16 }}>
+                <Space direction="vertical" size="small" style={{ width: '100%' }}>
+                  <Space>
+                    <ShoppingCartOutlined style={statIconStyle('#52c41a')} />
+                    <span style={{ color: token.colorTextSecondary, fontSize: 14 }}>累计订单</span>
+                  </Space>
+                  <Statistic value={agent.totalOrders} suffix="单" valueStyle={{ fontSize: 28, fontWeight: 600, color: '#52c41a' }} />
+                </Space>
+              </Card>
+            </Col>
+            <Col span={12}>
+              <Card className="section-card" style={statCardStyle('#fa8c16')} bodyStyle={{ padding: 16 }}>
+                <Space direction="vertical" size="small" style={{ width: '100%' }}>
+                  <Space>
+                    <DollarCircleOutlined style={statIconStyle('#fa8c16')} />
+                    <span style={{ color: token.colorTextSecondary, fontSize: 14 }}>累计收益</span>
+                  </Space>
+                  <Statistic 
+                    value={agent.totalIncome} 
+                    prefix="¥" 
+                    valueStyle={{ fontSize: 28, fontWeight: 600, color: '#fa8c16' }}
+                    formatter={(value) => `${(Number(value) / 10000).toFixed(2)}万`}
+                  />
+                </Space>
               </Card>
             </Col>
           </Row>

@@ -116,9 +116,9 @@ const AgentApplicationsPage = () => {
       dataIndex: 'levelRequested',
       width: 110,
       filters: [
-        { text: '省级代理', value: '省级代理' },
+        { text: '战略代理', value: '战略代理' },
         { text: '城市代理', value: '城市代理' },
-        { text: '校园合伙人', value: '校园合伙人' },
+        { text: '校园代理', value: '校园代理' },
       ],
       onFilter: (value, record) => record.levelRequested === value,
     },
@@ -206,9 +206,9 @@ const AgentApplicationsPage = () => {
             allowClear
             onChange={handleLevelChange}
             options={[
-              { label: '省级代理', value: '省级代理' },
+              { label: '战略代理', value: '战略代理' },
               { label: '城市代理', value: '城市代理' },
-              { label: '校园合伙人', value: '校园合伙人' },
+              { label: '校园代理', value: '校园代理' },
             ]}
           />
         </div>
