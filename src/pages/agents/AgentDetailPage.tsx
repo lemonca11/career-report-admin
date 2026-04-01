@@ -32,7 +32,19 @@ const AgentDetailPage = () => {
   const teamColumns: TableColumnsType<Agent> = [
     { title: '团队名称', dataIndex: 'name', ellipsis: true },
     { title: '级别', dataIndex: 'level', render: (value) => <StatusTag value={value} /> },
-    { title: '联系人', dataIndex: 'contact' },
+    {
+      title: '联系人',
+      dataIndex: 'contact',
+      render: (text: string, record: Agent) => (
+        <Button
+          type="link"
+          style={{ padding: 0, height: 'auto' }}
+          onClick={() => navigate(`/agents/${record.id}`)}
+        >
+          {text}
+        </Button>
+      ),
+    },
     { title: '额度余额', dataIndex: 'quotaBalance' },
     { title: '订单数', dataIndex: 'totalOrders' },
   ];
