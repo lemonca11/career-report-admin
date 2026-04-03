@@ -1,4 +1,4 @@
-import { ExclamationCircleOutlined, ReloadOutlined } from '@ant-design/icons';
+import { DownloadOutlined, ExclamationCircleOutlined, ReloadOutlined } from '@ant-design/icons';
 import { Button, Card, Input, Modal, Select, Space, Table, message } from 'antd';
 import type { TableColumnsType } from 'antd';
 import React from 'react';
@@ -102,12 +102,26 @@ const OrdersListPage = () => {
     {
       title: '操作',
       key: 'action',
-      width: 240,
+      width: 280,
       render: (_, record) => (
         <Space wrap>
           <Button size="small" type="link" onClick={() => navigate(`/orders/${record.id}`)}>
             详情
           </Button>
+          {record.status === '已完成' && record.reportId && (
+            <Button
+              size="small"
+              type="primary"
+              icon={<DownloadOutlined />}
+              onClick={() => {
+                const reportUrl = `/api/reports/${record.reportId}/download`;
+                window.open(reportUrl, '_blank');
+                message.success('开始下载报告');
+              }}
+            >
+              下载报告
+            </Button>
+          )}
           <Button size="small" icon={<ReloadOutlined />} onClick={() => handleRetry(record)}>
             重试生成
           </Button>
