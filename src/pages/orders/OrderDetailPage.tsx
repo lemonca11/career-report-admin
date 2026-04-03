@@ -61,9 +61,7 @@ const OrderDetailPage = () => {
           <Card className="section-card" title="订单信息">
             <Descriptions column={2} bordered className="info-grid">
               <Descriptions.Item label="订单号">{order.orderNo}</Descriptions.Item>
-              <Descriptions.Item label="报告编号">{order.reportId || '尚未生成'}</Descriptions.Item>
               <Descriptions.Item label="产品">{order.productName}</Descriptions.Item>
-              <Descriptions.Item label="报告类型">{order.reportType}</Descriptions.Item>
               <Descriptions.Item label="订单状态">
                 <StatusTag value={order.status} />
               </Descriptions.Item>
@@ -84,51 +82,34 @@ const OrderDetailPage = () => {
         <Col xs={24} xl={10}>
           <Card className="section-card" title="用户信息">
             <Descriptions column={1} bordered className="info-grid">
-              <Descriptions.Item label="姓名">{user.name}</Descriptions.Item>
               <Descriptions.Item label="昵称">{user.nickname}</Descriptions.Item>
               <Descriptions.Item label="手机号">{user.phone}</Descriptions.Item>
-              <Descriptions.Item label="学校 / 专业">
-                {user.university} / {user.major}
-              </Descriptions.Item>
-              <Descriptions.Item label="年级">{user.grade}</Descriptions.Item>
-              <Descriptions.Item label="目标方向">{user.careerDirection}</Descriptions.Item>
-              <Descriptions.Item label="用户状态">
-                <StatusTag value={user.status} />
-              </Descriptions.Item>
             </Descriptions>
           </Card>
         </Col>
         <Col xs={24}>
           <Card className="section-card" title="表单数据">
             <Descriptions column={2} bordered className="info-grid">
-              <Descriptions.Item label="目标岗位">{order.formData.careerGoal}</Descriptions.Item>
-              <Descriptions.Item label="期望行业">{order.formData.expectedIndustry}</Descriptions.Item>
-              <Descriptions.Item label="兴趣标签">
+              <Descriptions.Item label="学生姓名">{order.formData.studentName}</Descriptions.Item>
+              <Descriptions.Item label="性别">{order.formData.gender}</Descriptions.Item>
+              <Descriptions.Item label="高考省份">{order.formData.gaokaoProvince}</Descriptions.Item>
+              <Descriptions.Item label="户籍">{order.formData.householdRegistration}</Descriptions.Item>
+              <Descriptions.Item label="本科院校">{order.formData.undergraduateSchool}</Descriptions.Item>
+              <Descriptions.Item label="本科院系">{order.formData.undergraduateDepartment}</Descriptions.Item>
+              <Descriptions.Item label="本科专业">{order.formData.undergraduateMajor}</Descriptions.Item>
+              <Descriptions.Item label="入学年份">{order.formData.enrollmentYear}</Descriptions.Item>
+              <Descriptions.Item label="政治身份">{order.formData.politicalStatus}</Descriptions.Item>
+              <Descriptions.Item label="录取专业满意度">{order.formData.majorSatisfaction}</Descriptions.Item>
+              <Descriptions.Item label="研究生升学意愿">{order.formData.postgraduateIntent}</Descriptions.Item>
+              <Descriptions.Item label="研究生升学途径偏好">{order.formData.postgraduatePreference}</Descriptions.Item>
+              <Descriptions.Item label="就业意愿">{order.formData.employmentPreference}</Descriptions.Item>
+              <Descriptions.Item label="未来期望工作城市">
                 <Space wrap>
-                  {order.formData.interests.map((item) => (
-                    <Tag key={item}>{item}</Tag>
+                  {order.formData.expectedWorkCities.map((city) => (
+                    <Tag key={city}>{city}</Tag>
                   ))}
                 </Space>
               </Descriptions.Item>
-              <Descriptions.Item label="优势标签">
-                <Space wrap>
-                  {order.formData.strengths.map((item) => (
-                    <Tag key={item} color="processing">
-                      {item}
-                    </Tag>
-                  ))}
-                </Space>
-              </Descriptions.Item>
-              <Descriptions.Item label="当前顾虑">
-                <Space wrap>
-                  {order.formData.concerns.map((item) => (
-                    <Tag key={item} color="warning">
-                      {item}
-                    </Tag>
-                  ))}
-                </Space>
-              </Descriptions.Item>
-              <Descriptions.Item label="补充说明">{order.formData.notes}</Descriptions.Item>
             </Descriptions>
           </Card>
         </Col>
