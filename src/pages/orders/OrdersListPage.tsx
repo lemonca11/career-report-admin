@@ -1,4 +1,4 @@
-import { DownloadOutlined, ExclamationCircleOutlined, ReloadOutlined } from '@ant-design/icons';
+import { DownloadOutlined, ReloadOutlined } from '@ant-design/icons';
 import { Button, Card, Input, Modal, Select, Space, Table, message } from 'antd';
 import type { TableColumnsType } from 'antd';
 import React from 'react';
@@ -13,7 +13,7 @@ const OrdersListPage = () => {
   const navigate = useNavigate();
   const orders = useOrderStore((state) => state.orders);
   const retryGenerate = useOrderStore((state) => state.retryGenerate);
-  const markAbnormal = useOrderStore((state) => state.markAbnormal);
+
   const [keyword, setKeyword] = React.useState('');
   const [statusFilter, setStatusFilter] = React.useState<string>('全部');
   const [paymentFilter, setPaymentFilter] = React.useState<string>('全部');
@@ -34,18 +34,7 @@ const OrdersListPage = () => {
     message.success(`已重新触发订单 ${record.orderNo} 生成任务`);
   };
 
-  const handleException = (record: Order) => {
-    Modal.confirm({
-      title: '确认标记为异常？',
-      content: `${record.orderNo} / ${record.userName}`,
-      okText: '确认',
-      cancelText: '取消',
-      onOk: () => {
-        markAbnormal(record.id);
-        message.success('订单已标记异常');
-      },
-    });
-  };
+
 
   const columns: TableColumnsType<Order> = [
     {
@@ -102,32 +91,32 @@ const OrdersListPage = () => {
     {
       title: '操作',
       key: 'action',
-      width: 280,
+      width: 320,
+      fixed: 'right',
       render: (_, record) => (
-        <Space wrap>
+        <Space wrap size="small">
           <Button size="small" type="link" onClick={() => navigate(`/orders/${record.id}`)}>
             详情
           </Button>
-          {record.status === '已完成' && record.reportId && (
-            <Button
-              size="small"
-              type="primary"
-              icon={<DownloadOutlined />}
-              onClick={() => {
-                const reportUrl = `/api/reports/${record.reportId}/download`;
+          <Button
+            size="small"
+            type="primary"
+            icon={<DownloadOutlined />}
+            disabled={record.status !== '已完成'}
+            onClick={() => {
+              if (record.status === '已完成') {
+                const reportUrl = `/api/reports/${record.reportId || record.id}/download`;
                 window.open(reportUrl, '_blank');
                 message.success('开始下载报告');
-              }}
-            >
-              下载报告
-            </Button>
-          )}
+              }
+            }}
+          >
+            下载报告
+          </Button>
           <Button size="small" icon={<ReloadOutlined />} onClick={() => handleRetry(record)}>
             重试生成
           </Button>
-          <Button size="small" icon={<ExclamationCircleOutlined />} onClick={() => handleException(record)}>
-            标记异常
-          </Button>
+
         </Space>
       ),
     },

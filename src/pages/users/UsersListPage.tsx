@@ -1,10 +1,9 @@
-import { Card, Input, Select, Table } from 'antd';
+import { Card, Input, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import PageTitle from '@/components/PageTitle';
-import StatusTag from '@/components/StatusTag';
 import { useUserStore } from '@/store';
 import type { User } from '@/types/user';
 
@@ -12,7 +11,6 @@ const UsersListPage = () => {
   const navigate = useNavigate();
   const users = useUserStore((state) => state.users);
   const [keyword, setKeyword] = React.useState('');
-  const [statusFilter, setStatusFilter] = React.useState<string>('全部');
 
   const filteredData = users.filter((item) => {
     const matchesKeyword =
@@ -20,41 +18,19 @@ const UsersListPage = () => {
       item.name.includes(keyword) ||
       item.phone.includes(keyword) ||
       item.university.includes(keyword);
-    const matchesStatus = statusFilter === '全部' || item.status === statusFilter;
-    return matchesKeyword && matchesStatus;
+    return matchesKeyword;
   });
 
   const columns: TableColumnsType<User> = [
     {
       title: '姓名',
       dataIndex: 'name',
-      width: 100,
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      ellipsis: true,
     },
     {
       title: '手机号',
       dataIndex: 'phone',
-      width: 130,
-    },
-    {
-      title: '学校',
-      dataIndex: 'university',
-      width: 160,
-    },
-    {
-      title: '专业',
-      dataIndex: 'major',
-      width: 160,
-    },
-    {
-      title: '年级',
-      dataIndex: 'grade',
-      width: 100,
-    },
-    {
-      title: '职业方向',
-      dataIndex: 'careerDirection',
-      width: 140,
+      ellipsis: true,
     },
     {
       title: '订单数',
@@ -69,18 +45,10 @@ const UsersListPage = () => {
       sorter: (a, b) => a.reportCount - b.reportCount,
     },
     {
-      title: '状态',
-      dataIndex: 'status',
-      width: 100,
-      filters: ['活跃', '沉默'].map((value) => ({ text: value, value })),
-      onFilter: (value, record) => record.status === value,
-      render: (value) => <StatusTag value={value} />,
-    },
-    {
-      title: '最近活跃',
-      dataIndex: 'lastActiveAt',
+      title: '注册时间',
+      dataIndex: 'registerAt',
       width: 170,
-      sorter: (a, b) => a.lastActiveAt.localeCompare(b.lastActiveAt),
+      sorter: (a, b) => a.registerAt.localeCompare(b.registerAt),
     },
     {
       title: '操作',
@@ -111,19 +79,13 @@ const UsersListPage = () => {
             onSearch={setKeyword}
             onChange={(event) => setKeyword(event.target.value)}
           />
-          <Select
-            style={{ width: 160 }}
-            value={statusFilter}
-            onChange={setStatusFilter}
-            options={['全部', '活跃', '沉默'].map((value) => ({ label: value, value }))}
-          />
         </div>
         <Table
           rowKey="id"
           columns={columns}
           dataSource={filteredData}
           pagination={{ pageSize: 8, showSizeChanger: false }}
-          scroll={{ x: 1300 }}
+
         />
       </Card>
     </div>

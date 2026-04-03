@@ -3,10 +3,13 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://lemonca11.github.io/career-report-admin/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "npm run build && npm run deploy:docs",
+    "deploy:docs": "rm -rf docs && cp -r dist docs && git add docs && git commit -m 'deploy: update docs' && git push"
   },
   "dependencies": {
     "@ant-design/icons": "^5.6.1",
@@ -23,6 +26,7 @@
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.4.1",
+    "gh-pages": "^6.3.0",
     "typescript": "^5.7.2",
     "vite": "^5.4.11"
   }
