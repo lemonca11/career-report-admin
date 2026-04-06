@@ -2,7 +2,6 @@ import React from 'react';
 import {
   Table,
   Button,
-  Space,
   Tag,
   Typography,
   Input,
@@ -26,51 +25,55 @@ const Users: React.FC = () => {
       title: '用户ID',
       dataIndex: 'id',
       key: 'id',
-      width: 80,
+      width: 90,
       ellipsis: true,
     },
     {
       title: '头像',
       dataIndex: 'avatar',
       key: 'avatar',
-      width: 50,
+      width: 56,
+      align: 'center' as const,
       render: (avatar: string) => <Avatar src={avatar} size="small" />,
     },
     {
       title: '昵称',
       dataIndex: 'nickname',
       key: 'nickname',
-      width: 80,
+      minWidth: 100,
       ellipsis: true,
     },
     {
       title: '手机号',
       dataIndex: 'mobile',
       key: 'mobile',
-      width: 100,
+      width: 115,
     },
     {
       title: '订单',
       dataIndex: 'orderCount',
       key: 'orderCount',
-      width: 50,
+      width: 56,
       align: 'center' as const,
     },
     {
       title: '报告',
       dataIndex: 'reportCount',
       key: 'reportCount',
-      width: 50,
+      width: 56,
       align: 'center' as const,
     },
     {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
-      width: 60,
+      width: 68,
       align: 'center' as const,
       render: (status: string) => (
-        <Tag color={status === 'active' ? 'success' : 'default'} size="small">
+        <Tag 
+          color={status === 'active' ? 'success' : 'default'} 
+          style={{ margin: 0, fontSize: 12 }}
+        >
           {status === 'active' ? '正常' : '停用'}
         </Tag>
       ),
@@ -79,18 +82,25 @@ const Users: React.FC = () => {
       title: '注册时间',
       dataIndex: 'registerTime',
       key: 'registerTime',
-      width: 130,
-      render: (date: string) => new Date(date).toLocaleString(),
+      width: 145,
+      render: (date: string) => new Date(date).toLocaleString('zh-CN', {
+        month: 'numeric',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
     },
     {
       title: '操作',
       key: 'action',
-      width: 60,
+      width: 70,
       fixed: 'right',
+      align: 'center' as const,
       render: (_: unknown, record: User) => (
         <Button
           type="link"
           size="small"
+          style={{ padding: '0 4px' }}
           icon={<EyeOutlined />}
           onClick={() => navigate(`/users/${record.id}`)}
         >
@@ -113,7 +123,7 @@ const Users: React.FC = () => {
         dataSource={users}
         rowKey="id"
         pagination={{ pageSize: 10 }}
-        scroll={{ x: 'max-content' }}
+        scroll={{ x: 740 }}
         size="small"
       />
     </div>
