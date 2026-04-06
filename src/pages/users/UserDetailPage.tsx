@@ -64,21 +64,8 @@ const UserDetailPage = () => {
           <Card className="section-card" title="基本信息">
             <Descriptions column={3} bordered className="info-grid">
               <Descriptions.Item label="姓名">{user.name}</Descriptions.Item>
-              <Descriptions.Item label="昵称">{user.nickname}</Descriptions.Item>
-              <Descriptions.Item label="状态">
-                <StatusTag value={user.status} />
-              </Descriptions.Item>
               <Descriptions.Item label="手机号">{user.phone}</Descriptions.Item>
-              <Descriptions.Item label="学校">{user.university}</Descriptions.Item>
-              <Descriptions.Item label="专业">{user.major}</Descriptions.Item>
-              <Descriptions.Item label="年级">{user.grade}</Descriptions.Item>
-              <Descriptions.Item label="城市">{user.city}</Descriptions.Item>
-              <Descriptions.Item label="职业方向">{user.careerDirection}</Descriptions.Item>
               <Descriptions.Item label="注册时间">{user.registerAt}</Descriptions.Item>
-              <Descriptions.Item label="最近活跃">{user.lastActiveAt}</Descriptions.Item>
-              <Descriptions.Item label="累计订单 / 报告">
-                {user.totalOrders} / {user.reportCount}
-              </Descriptions.Item>
             </Descriptions>
           </Card>
         </Col>
