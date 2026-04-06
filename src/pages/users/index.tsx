@@ -25,34 +25,29 @@ const Users: React.FC = () => {
       title: '姓名',
       dataIndex: 'nickname',
       key: 'nickname',
-      width: 120,
       ellipsis: true,
     },
     {
       title: '手机号',
       dataIndex: 'mobile',
       key: 'mobile',
-      width: 120,
     },
     {
       title: '订单数',
       dataIndex: 'orderCount',
       key: 'orderCount',
-      width: 80,
       align: 'center' as const,
     },
     {
       title: '报告数',
       dataIndex: 'reportCount',
       key: 'reportCount',
-      width: 80,
       align: 'center' as const,
     },
     {
       title: '注册时间',
       dataIndex: 'registerTime',
       key: 'registerTime',
-      width: 150,
       render: (date: string) => new Date(date).toLocaleString('zh-CN', {
         month: 'numeric',
         day: 'numeric',
@@ -63,7 +58,6 @@ const Users: React.FC = () => {
     {
       title: '操作',
       key: 'action',
-      width: 100,
       align: 'center' as const,
       render: (_: unknown, record: User) => (
         <Button
@@ -91,7 +85,7 @@ const Users: React.FC = () => {
         dataSource={users}
         rowKey="id"
         pagination={{ pageSize: 10 }}
-        scroll={{ x: 650 }}
+        scroll={{ x: 'max-content' }}
         size="small"
       />
     </div>
