@@ -22,67 +22,37 @@ const Users: React.FC = () => {
 
   const columns = [
     {
-      title: '用户ID',
-      dataIndex: 'id',
-      key: 'id',
-      width: 90,
-      ellipsis: true,
-    },
-    {
-      title: '头像',
-      dataIndex: 'avatar',
-      key: 'avatar',
-      width: 56,
-      align: 'center' as const,
-      render: (avatar: string) => <Avatar src={avatar} size="small" />,
-    },
-    {
-      title: '昵称',
+      title: '姓名',
       dataIndex: 'nickname',
       key: 'nickname',
-      minWidth: 100,
+      width: 120,
       ellipsis: true,
     },
     {
       title: '手机号',
       dataIndex: 'mobile',
       key: 'mobile',
-      width: 115,
+      width: 120,
     },
     {
-      title: '订单',
+      title: '订单数',
       dataIndex: 'orderCount',
       key: 'orderCount',
-      width: 56,
+      width: 80,
       align: 'center' as const,
     },
     {
-      title: '报告',
+      title: '报告数',
       dataIndex: 'reportCount',
       key: 'reportCount',
-      width: 56,
+      width: 80,
       align: 'center' as const,
-    },
-    {
-      title: '状态',
-      dataIndex: 'status',
-      key: 'status',
-      width: 68,
-      align: 'center' as const,
-      render: (status: string) => (
-        <Tag 
-          color={status === 'active' ? 'success' : 'default'} 
-          style={{ margin: 0, fontSize: 12 }}
-        >
-          {status === 'active' ? '正常' : '停用'}
-        </Tag>
-      ),
     },
     {
       title: '注册时间',
       dataIndex: 'registerTime',
       key: 'registerTime',
-      width: 145,
+      width: 150,
       render: (date: string) => new Date(date).toLocaleString('zh-CN', {
         month: 'numeric',
         day: 'numeric',
@@ -93,14 +63,12 @@ const Users: React.FC = () => {
     {
       title: '操作',
       key: 'action',
-      width: 70,
-      fixed: 'right',
+      width: 100,
       align: 'center' as const,
       render: (_: unknown, record: User) => (
         <Button
           type="link"
           size="small"
-          style={{ padding: '0 4px' }}
           icon={<EyeOutlined />}
           onClick={() => navigate(`/users/${record.id}`)}
         >
@@ -123,7 +91,7 @@ const Users: React.FC = () => {
         dataSource={users}
         rowKey="id"
         pagination={{ pageSize: 10 }}
-        scroll={{ x: 740 }}
+        scroll={{ x: 650 }}
         size="small"
       />
     </div>
