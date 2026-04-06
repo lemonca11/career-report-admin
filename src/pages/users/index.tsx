@@ -26,46 +26,51 @@ const Users: React.FC = () => {
       title: '用户ID',
       dataIndex: 'id',
       key: 'id',
+      width: 100,
       ellipsis: true,
     },
     {
       title: '头像',
       dataIndex: 'avatar',
       key: 'avatar',
-      width: 80,
-      render: (avatar: string) => <Avatar src={avatar} />,
+      width: 60,
+      render: (avatar: string) => <Avatar src={avatar} size="small" />,
     },
     {
       title: '昵称',
       dataIndex: 'nickname',
       key: 'nickname',
+      width: 100,
       ellipsis: true,
     },
     {
       title: '手机号',
       dataIndex: 'mobile',
       key: 'mobile',
-      width: 120,
+      width: 110,
     },
     {
       title: '订单数',
       dataIndex: 'orderCount',
       key: 'orderCount',
-      width: 90,
+      width: 70,
+      align: 'center' as const,
     },
     {
       title: '报告数',
       dataIndex: 'reportCount',
       key: 'reportCount',
-      width: 90,
+      width: 70,
+      align: 'center' as const,
     },
     {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
-      width: 80,
+      width: 70,
+      align: 'center' as const,
       render: (status: string) => (
-        <Tag color={status === 'active' ? 'success' : 'default'}>
+        <Tag color={status === 'active' ? 'success' : 'default'} size="small">
           {status === 'active' ? '正常' : '停用'}
         </Tag>
       ),
@@ -74,17 +79,18 @@ const Users: React.FC = () => {
       title: '注册时间',
       dataIndex: 'registerTime',
       key: 'registerTime',
-      width: 180,
+      width: 150,
       render: (date: string) => new Date(date).toLocaleString(),
     },
     {
       title: '操作',
       key: 'action',
-      width: 100,
+      width: 80,
       fixed: 'right',
       render: (_: unknown, record: User) => (
         <Button
           type="link"
+          size="small"
           icon={<EyeOutlined />}
           onClick={() => navigate(`/users/${record.id}`)}
         >
@@ -108,6 +114,7 @@ const Users: React.FC = () => {
         rowKey="id"
         pagination={{ pageSize: 10 }}
         scroll={{ x: 'max-content' }}
+        size="small"
       />
     </div>
   );
