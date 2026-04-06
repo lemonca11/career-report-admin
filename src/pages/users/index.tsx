@@ -26,48 +26,48 @@ const Users: React.FC = () => {
       title: '用户ID',
       dataIndex: 'id',
       key: 'id',
-      width: 100,
+      width: 80,
       ellipsis: true,
     },
     {
       title: '头像',
       dataIndex: 'avatar',
       key: 'avatar',
-      width: 60,
+      width: 50,
       render: (avatar: string) => <Avatar src={avatar} size="small" />,
     },
     {
       title: '昵称',
       dataIndex: 'nickname',
       key: 'nickname',
-      width: 100,
+      width: 80,
       ellipsis: true,
     },
     {
       title: '手机号',
       dataIndex: 'mobile',
       key: 'mobile',
-      width: 110,
+      width: 100,
     },
     {
-      title: '订单数',
+      title: '订单',
       dataIndex: 'orderCount',
       key: 'orderCount',
-      width: 70,
+      width: 50,
       align: 'center' as const,
     },
     {
-      title: '报告数',
+      title: '报告',
       dataIndex: 'reportCount',
       key: 'reportCount',
-      width: 70,
+      width: 50,
       align: 'center' as const,
     },
     {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
-      width: 70,
+      width: 60,
       align: 'center' as const,
       render: (status: string) => (
         <Tag color={status === 'active' ? 'success' : 'default'} size="small">
@@ -79,13 +79,13 @@ const Users: React.FC = () => {
       title: '注册时间',
       dataIndex: 'registerTime',
       key: 'registerTime',
-      width: 150,
+      width: 130,
       render: (date: string) => new Date(date).toLocaleString(),
     },
     {
       title: '操作',
       key: 'action',
-      width: 80,
+      width: 60,
       fixed: 'right',
       render: (_: unknown, record: User) => (
         <Button
@@ -94,7 +94,7 @@ const Users: React.FC = () => {
           icon={<EyeOutlined />}
           onClick={() => navigate(`/users/${record.id}`)}
         >
-          详情
+          查看
         </Button>
       ),
     },
