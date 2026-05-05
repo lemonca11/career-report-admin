@@ -2,6 +2,7 @@ import { CheckCircleOutlined, CloseCircleOutlined, EyeOutlined } from '@ant-desi
 import { Button, Card, Input, Modal, Select, Space, Table, Typography, message, Form } from 'antd';
 import type { TableColumnsType } from 'antd';
 import React from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import PageTitle from '@/components/PageTitle';
 import StatusTag from '@/components/StatusTag';
@@ -9,11 +10,13 @@ import { useAgentStore } from '@/store';
 import type { AgentApplication } from '@/types/agent';
 
 const AgentApplicationsPage = () => {
+  const [searchParams] = useSearchParams();
+  const searchStatus = searchParams.get('status') || undefined;
   const applications = useAgentStore((state) => state.applications);
   const approveApplication = useAgentStore((state) => state.approveApplication);
   const rejectApplication = useAgentStore((state) => state.rejectApplication);
   const [keyword, setKeyword] = React.useState('');
-  const [statusFilter, setStatusFilter] = React.useState<string | undefined>(undefined);
+  const [statusFilter, setStatusFilter] = React.useState<string | undefined>(searchStatus);
   const [levelFilter, setLevelFilter] = React.useState<string | undefined>(undefined);
   
   // 驳回弹窗状态
@@ -33,6 +36,10 @@ const AgentApplicationsPage = () => {
     const matchesLevel = !levelFilter || item.levelRequested === levelFilter;
     return matchesKeyword && matchesStatus && matchesLevel;
   });
+
+  React.useEffect(() => {
+    setStatusFilter(searchStatus);
+  }, [searchStatus]);
 
   // 处理筛选器选择变化
   const handleStatusChange = (value: string) => {

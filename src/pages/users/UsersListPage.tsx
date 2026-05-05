@@ -1,4 +1,4 @@
-import { Card, Input, Table } from 'antd';
+import { Button, Card, Input, Table, Typography } from 'antd';
 import type { TableColumnsType } from 'antd';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -25,44 +25,48 @@ const UsersListPage = () => {
     {
       title: '姓名',
       dataIndex: 'name',
+      width: 132,
       ellipsis: true,
+      render: (value) => <Typography.Text strong>{value}</Typography.Text>,
     },
     {
       title: '手机号',
       dataIndex: 'phone',
+      width: 152,
       ellipsis: true,
+      render: (value) => <Typography.Text style={{ fontVariantNumeric: 'tabular-nums' }}>{value}</Typography.Text>,
     },
     {
       title: '订单数',
       dataIndex: 'totalOrders',
-      width: 100,
+      width: 96,
       sorter: (a, b) => a.totalOrders - b.totalOrders,
     },
     {
       title: '报告数',
       dataIndex: 'reportCount',
-      width: 100,
+      width: 96,
       sorter: (a, b) => a.reportCount - b.reportCount,
     },
     {
       title: '注册时间',
       dataIndex: 'registerAt',
-      width: 170,
+      width: 176,
       sorter: (a, b) => a.registerAt.localeCompare(b.registerAt),
     },
     {
       title: '操作',
       key: 'action',
-      width: 90,
+      width: 116,
       render: (_, record) => (
-        <a
-          onClick={(event) => {
-            event.preventDefault();
-            navigate(`/users/${record.id}`);
-          }}
+        <Button
+          type="link"
+          size="small"
+          style={{ paddingInline: 0 }}
+          onClick={() => navigate(`/users/${record.id}`)}
         >
           查看详情
-        </a>
+        </Button>
       ),
     },
   ];
@@ -85,7 +89,7 @@ const UsersListPage = () => {
           columns={columns}
           dataSource={filteredData}
           pagination={{ pageSize: 8, showSizeChanger: false }}
-
+          scroll={{ x: 'max-content' }}
         />
       </Card>
     </div>

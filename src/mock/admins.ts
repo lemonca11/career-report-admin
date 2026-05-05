@@ -1,0 +1,40 @@
+import type { AdminUser } from '@/types/admin';
+
+export const adminUsersMock: AdminUser[] = [
+  {
+    id: 'admin-001',
+    username: 'admin',
+    passwordHash: 'admin123',
+    name: '系统管理员',
+    mobile: '13800000001',
+    roleCode: 'SUPER_ADMIN',
+    status: 'active',
+    lastLoginAt: '2026-04-07 10:08:23',
+    createdAt: '2026-03-29 09:00:00',
+    createdBy: '系统初始化',
+  },
+  {
+    id: 'admin-002',
+    username: 'operator',
+    passwordHash: 'operator123',
+    name: '运营管理员',
+    mobile: '13800000002',
+    roleCode: 'ADMIN',
+    status: 'active',
+    lastLoginAt: '2026-04-06 18:42:10',
+    createdAt: '2026-04-01 11:20:00',
+    createdBy: '系统管理员',
+  },
+  {
+    id: 'admin-003',
+    username: 'audit',
+    passwordHash: 'audit1234',
+    name: '审核专员',
+    mobile: '13800000003',
+    roleCode: 'ADMIN',
+    status: 'disabled',
+    lastLoginAt: '2026-04-03 15:16:30',
+    createdAt: '2026-04-02 10:35:00',
+    createdBy: '系统管理员',
+  },
+];

@@ -11,23 +11,26 @@ import {
   Space,
   Statistic,
   Table,
+  Typography,
   message,
 } from 'antd';
 import type { TableColumnsType } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
 import PageTitle from '@/components/PageTitle';
-import StatusTag from '@/components/StatusTag';
 import { useAgentStore, useQuotaStore } from '@/store';
 import type { QuotaLog } from '@/types/agent';
 import { formatNumber } from '@/utils/format';
 
 const QuotaPage = () => {
+  const navigate = useNavigate();
   const agents = useAgentStore((state) => state.agents);
   const quotaLogs = useQuotaStore((state) => state.logs);
-  const addLog = useQuotaStore((state) => state.addLog);
+  const issueQuota = useQuotaStore((state) => state.issueQuota);
   const [form] = Form.useForm();
 
   const totalIssued = quotaLogs.filter((item) => item.type === '发放').reduce((sum, item) => sum + item.amount, 0);
+  const totalIncome = agents.reduce((sum, item) => sum + item.totalIncome, 0);
   const currentBalance = agents.reduce((sum, item) => sum + item.quotaBalance, 0);
 
   const handleIssue = async () => {
@@ -41,32 +44,33 @@ const QuotaPage = () => {
     {
       title: '时间',
       dataIndex: 'createdAt',
-      width: 170,
+      width: 176,
       sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
     },
     {
       title: '代理',
       dataIndex: 'agentName',
-      width: 180,
+      width: 176,
       filters: agents.map((agent) => ({ text: agent.name, value: agent.name })),
       onFilter: (value, record) => record.agentName === value,
-    },
-    {
-      title: '类型',
-      dataIndex: 'type',
-      width: 100,
-      filters: [
-        { text: '发放', value: '发放' },
-        { text: '扣减', value: '扣减' },
-      ],
-      onFilter: (value, record) => record.type === value,
-      render: (value) => <StatusTag value={value} />,
+      render: (_, record) => (
+        <Button
+          type="link"
+          size="small"
+          style={{ paddingInline: 0 }}
+          onClick={() => navigate(`/agents/${record.agentId}`)}
+        >
+          {record.agentName}
+        </Button>
+      ),
     },
     {
       title: '数量',
       dataIndex: 'amount',
-      width: 100,
+      width: 104,
+      align: 'center',
       sorter: (a, b) => a.amount - b.amount,
+      render: (value) => <Typography.Text style={{ fontVariantNumeric: 'tabular-nums' }}>{value}</Typography.Text>,
     },
     {
       title: '操作人',
@@ -74,14 +78,18 @@ const QuotaPage = () => {
       width: 140,
     },
     {
-      title: '备注',
-      dataIndex: 'remark',
-    },
-    {
       title: '变更后余额',
       dataIndex: 'balanceAfter',
-      width: 120,
+      width: 132,
+      align: 'center',
       sorter: (a, b) => a.balanceAfter - b.balanceAfter,
+      render: (value) => <Typography.Text style={{ fontVariantNumeric: 'tabular-nums' }}>{value}</Typography.Text>,
+    },
+    {
+      title: '备注',
+      dataIndex: 'remark',
+      width: 320,
+      ellipsis: true,
     },
   ];
 
@@ -90,17 +98,22 @@ const QuotaPage = () => {
       <PageTitle title="额度管理" subtitle="集中处理代理额度发放，并追踪每一笔额度流水。" />
 
       <Row gutter={[16, 16]}>
-        <Col xs={24} xl={8}>
+        <Col xs={24} sm={12} xl={6}>
           <Card className="section-card">
             <Statistic title="累计发放额度" value={formatNumber(totalIssued)} />
           </Card>
         </Col>
-        <Col xs={24} xl={8}>
+        <Col xs={24} sm={12} xl={6}>
+          <Card className="section-card">
+            <Statistic title="累计收益" value={formatNumber(totalIncome)} prefix="¥" />
+          </Card>
+        </Col>
+        <Col xs={24} sm={12} xl={6}>
           <Card className="section-card">
             <Statistic title="当前库存总额" value={formatNumber(currentBalance)} />
           </Card>
         </Col>
-        <Col xs={24} xl={8}>
+        <Col xs={24} sm={12} xl={6}>
           <Card className="section-card">
             <Statistic title="流水记录数" value={quotaLogs.length} />
           </Card>
@@ -140,7 +153,8 @@ const QuotaPage = () => {
               columns={columns}
               dataSource={quotaLogs}
               pagination={{ pageSize: 7, showSizeChanger: false }}
-              scroll={{ x: 1100 }}
+              scroll={{ x: 1120 }}
+              tableLayout="fixed"
             />
           </Card>
         </Col>

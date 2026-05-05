@@ -14,6 +14,11 @@ import type {
   PromptItem,
 } from '@/types/prompt';
 import type {
+  AdminUser,
+  CreateAdminUserPayload,
+  UpdateAdminUserPayload,
+} from '@/types/admin';
+import type {
   TodoItem,
   DashboardStats,
 } from '@/types/index';
@@ -33,9 +38,13 @@ import {
   promptsMock,
 } from '@/mock/prompts';
 import {
+  adminUsersMock,
+} from '@/mock/admins';
+import {
   todosMock,
   dashboardStatsMock,
 } from '@/mock/todos';
+import { getStoredAdminUser } from '@/utils/auth';
 
 // Dashboard Store
 interface DashboardStore {
@@ -232,5 +241,120 @@ export const usePromptStore = create<PromptStore>((set, get) => ({
         : p
     );
     set({ prompts });
+  },
+}));
+
+interface AdminAccountStore {
+  adminUsers: AdminUser[];
+  fetchAdminUsers: () => void;
+  createAdminUser: (payload: CreateAdminUserPayload) => { success: boolean; error?: string };
+  updateAdminUser: (id: string, payload: UpdateAdminUserPayload) => { success: boolean; error?: string };
+  resetAdminPassword: (id: string, password: string) => void;
+  toggleAdminUserStatus: (id: string) => { success: boolean; error?: string };
+  markLastLogin: (username: string) => void;
+}
+
+const getActiveSuperAdminCount = (users: AdminUser[]) =>
+  users.filter((item) => item.roleCode === 'SUPER_ADMIN' && item.status === 'active').length;
+
+export const useAdminAccountStore = create<AdminAccountStore>((set, get) => ({
+  adminUsers: adminUsersMock,
+  fetchAdminUsers: () => set({ adminUsers: adminUsersMock }),
+  createAdminUser: (payload) => {
+    const username = payload.username.trim();
+
+    if (get().adminUsers.some((item) => item.username.toLowerCase() === username.toLowerCase())) {
+      return { success: false, error: '账号已存在' };
+    }
+
+    const currentUser = getStoredAdminUser();
+    const nextUser: AdminUser = {
+      id: `admin-${Date.now()}`,
+      username,
+      passwordHash: payload.password,
+      name: payload.name.trim(),
+      mobile: payload.mobile?.trim(),
+      roleCode: 'ADMIN',
+      status: 'active',
+      createdAt: new Date().toLocaleString('zh-CN'),
+      createdBy: currentUser?.name || '系统管理员',
+    };
+
+    set({ adminUsers: [nextUser, ...get().adminUsers] });
+    return { success: true };
+  },
+  updateAdminUser: (id, payload) => {
+    const users = get().adminUsers;
+    const target = users.find((item) => item.id === id);
+
+    if (!target) {
+      return { success: false, error: '管理员不存在' };
+    }
+
+    if (
+      target.roleCode === 'SUPER_ADMIN' &&
+      target.status === 'active' &&
+      payload.status === 'disabled' &&
+      getActiveSuperAdminCount(users) <= 1
+    ) {
+      return { success: false, error: '至少保留 1 个超级管理员' };
+    }
+
+    set({
+      adminUsers: users.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              name: payload.name.trim(),
+              mobile: payload.mobile?.trim(),
+              status: payload.status,
+            }
+          : item,
+      ),
+    });
+
+    return { success: true };
+  },
+  resetAdminPassword: (id, password) => {
+    set({
+      adminUsers: get().adminUsers.map((item) =>
+        item.id === id ? { ...item, passwordHash: password } : item,
+      ),
+    });
+  },
+  toggleAdminUserStatus: (id) => {
+    const users = get().adminUsers;
+    const target = users.find((item) => item.id === id);
+
+    if (!target) {
+      return { success: false, error: '管理员不存在' };
+    }
+
+    if (
+      target.roleCode === 'SUPER_ADMIN' &&
+      target.status === 'active' &&
+      getActiveSuperAdminCount(users) <= 1
+    ) {
+      return { success: false, error: '至少保留 1 个超级管理员' };
+    }
+
+    set({
+      adminUsers: users.map((item) =>
+        item.id === id
+          ? { ...item, status: item.status === 'active' ? 'disabled' : 'active' }
+          : item,
+      ),
+    });
+
+    return { success: true };
+  },
+  markLastLogin: (username) => {
+    set({
+      adminUsers: get().adminUsers.map((item) =>
+        item.username === username
+          ? { ...item, lastLoginAt: new Date().toLocaleString('zh-CN') }
+          : item,
+      ),
+    });
   },
 }));

@@ -67,7 +67,7 @@ const OrdersListPage = () => {
       render: (value) => `¥${value}`,
     },
     {
-      title: '订单状态',
+      title: '报告状态',
       dataIndex: 'status',
       width: 120,
       filters: ['待生成', '生成中', '已完成', '生成失败', '异常'].map((value) => ({ text: value, value })),
@@ -75,7 +75,7 @@ const OrdersListPage = () => {
       render: (value) => <StatusTag value={value} />,
     },
     {
-      title: '支付状态',
+      title: '订单状态',
       dataIndex: 'paymentStatus',
       width: 120,
       filters: ['已支付', '待支付', '已退款'].map((value) => ({ text: value, value })),

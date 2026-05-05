@@ -10,12 +10,14 @@ interface PageTitleProps {
 }
 
 const PageTitle = ({ title, subtitle, extra }: PageTitleProps) => (
-  <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-    <div>
-      <Title level={4} style={{ marginBottom: subtitle ? 8 : 0 }}>{title}</Title>
-      {subtitle && <Typography.Text type="secondary">{subtitle}</Typography.Text>}
+  <div className="page-title">
+    <div className="page-title__main">
+      <Title level={4} className="page-title__heading">
+        {title}
+      </Title>
+      {subtitle ? <Typography.Text className="page-title__subtitle">{subtitle}</Typography.Text> : null}
     </div>
-    {extra && <Space>{extra}</Space>}
+    {extra ? <Space className="page-title__extra">{extra}</Space> : null}
   </div>
 );
 

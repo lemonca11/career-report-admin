@@ -118,7 +118,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <div>
-      <Title level={4}>控制台</Title>
+      <Title level={4}>驾驶舱</Title>
       
       {/* 统计卡片 */}
       <Row gutter={16} style={{ marginBottom: 24 }}>

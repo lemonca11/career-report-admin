@@ -526,19 +526,19 @@ export const rolePermissions: RolePermission[] = [
     id: 'role-001',
     roleName: '超级管理员',
     description: '查看并操作全部模块，包括配置发布与权限管理。',
-    scopes: ['控制台', '代理管理', '额度管理', '订单中心', '用户中心', 'Prompt管理', '系统设置'],
+    scopes: ['驾驶舱', '代理管理', '额度管理', '订单中心', '用户中心', 'Prompt管理', '系统设置'],
   },
   {
     id: 'role-002',
     roleName: '运营管理员',
     description: '负责代理审核、额度发放和订单异常处理。',
-    scopes: ['控制台', '代理管理', '额度管理', '订单中心', '用户中心'],
+    scopes: ['驾驶舱', '代理管理', '额度管理', '订单中心', '用户中心'],
   },
   {
     id: 'role-003',
     roleName: '内容管理员',
     description: '负责 Prompt 编辑、测试、发布与回滚。',
-    scopes: ['控制台', 'Prompt管理'],
+    scopes: ['驾驶舱', 'Prompt管理'],
   },
 ];
 

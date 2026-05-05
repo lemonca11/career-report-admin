@@ -62,10 +62,10 @@ const OrderDetailPage = () => {
             <Descriptions column={2} bordered className="info-grid">
               <Descriptions.Item label="订单号">{order.orderNo}</Descriptions.Item>
               <Descriptions.Item label="产品">{order.productName}</Descriptions.Item>
-              <Descriptions.Item label="订单状态">
+              <Descriptions.Item label="报告状态">
                 <StatusTag value={order.status} />
               </Descriptions.Item>
-              <Descriptions.Item label="支付状态">
+              <Descriptions.Item label="订单状态">
                 <StatusTag value={order.paymentStatus} />
               </Descriptions.Item>
               <Descriptions.Item label="订单金额">¥{order.amount}</Descriptions.Item>

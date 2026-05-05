@@ -2,7 +2,6 @@ import {
   AppstoreOutlined,
   BgColorsOutlined,
   DashboardOutlined,
-  FileTextOutlined,
   LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -19,53 +18,66 @@ import React from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { useThemeStore } from '@/store/themeStore';
+import { getAdminRoleLabel, getStoredAdminUser, isSuperAdmin } from '@/utils/auth';
 
 const { Content, Header, Sider } = Layout;
 
-const menuItems: MenuProps['items'] = [
-  {
-    key: '/dashboard',
-    icon: <DashboardOutlined />,
-    label: '控制台',
-  },
-  {
-    key: '/agents',
-    icon: <TeamOutlined />,
-    label: '代理管理',
-    children: [
-      { key: '/agents/applications', label: '申请审核' },
-      { key: '/agents/list', label: '代理列表' },
-    ],
-  },
-  {
-    key: '/quota',
-    icon: <WalletOutlined />,
-    label: '额度管理',
-  },
-  {
-    key: '/orders',
-    icon: <OrderedListOutlined />,
-    label: '订单中心',
-    children: [{ key: '/orders/list', label: '订单列表' }],
-  },
-  {
-    key: '/users',
-    icon: <UserOutlined />,
-    label: '用户中心',
-    children: [{ key: '/users/list', label: '用户列表' }],
-  },
-  {
-    key: '/prompts',
-    icon: <BgColorsOutlined />,
-    label: 'Prompt管理',
-    children: [{ key: '/prompts/list', label: 'Prompt列表' }],
-  },
-  {
-    key: '/settings',
-    icon: <SettingOutlined />,
-    label: '系统设置',
-  },
-];
+const getMenuItems = (allowSuperAdminFeatures: boolean): MenuProps['items'] => {
+  const items: MenuProps['items'] = [
+    {
+      key: '/dashboard',
+      icon: <DashboardOutlined />,
+      label: '驾驶舱',
+    },
+    {
+      key: '/agents',
+      icon: <TeamOutlined />,
+      label: '代理管理',
+      children: [
+        { key: '/agents/applications', label: '申请审核' },
+        { key: '/agents/list', label: '代理列表' },
+      ],
+    },
+    {
+      key: '/quota',
+      icon: <WalletOutlined />,
+      label: '额度管理',
+    },
+    {
+      key: '/orders',
+      icon: <OrderedListOutlined />,
+      label: '订单中心',
+      children: [{ key: '/orders/list', label: '订单列表' }],
+    },
+    {
+      key: '/users',
+      icon: <UserOutlined />,
+      label: '用户中心',
+      children: [{ key: '/users/list', label: '用户列表' }],
+    },
+  ];
+
+  if (allowSuperAdminFeatures) {
+    items.push({
+      key: '/prompts',
+      icon: <BgColorsOutlined />,
+      label: 'Prompt管理',
+      children: [{ key: '/prompts/list', label: 'Prompt列表' }],
+    });
+
+    items.push({
+      key: '/settings-group',
+      icon: <SettingOutlined />,
+      label: '系统设置',
+      children: [
+        { key: '/settings/admins', label: '管理员管理' },
+        { key: '/settings', label: '系统设置' },
+      ],
+    });
+  }
+
+  return items;
+};
 
 const getSelectedMenuKey = (pathname: string) => {
   if (pathname.startsWith('/agents/applications')) return '/agents/applications';
@@ -74,6 +86,7 @@ const getSelectedMenuKey = (pathname: string) => {
   if (pathname.startsWith('/orders')) return '/orders/list';
   if (pathname.startsWith('/users')) return '/users/list';
   if (pathname.startsWith('/prompts')) return '/prompts/list';
+  if (pathname.startsWith('/settings/admins')) return '/settings/admins';
   if (pathname.startsWith('/settings')) return '/settings';
   return '/dashboard';
 };
@@ -83,11 +96,12 @@ const getOpenMenuKey = (pathname: string) => {
   if (pathname.startsWith('/orders')) return '/orders';
   if (pathname.startsWith('/users')) return '/users';
   if (pathname.startsWith('/prompts')) return '/prompts';
+  if (pathname.startsWith('/settings')) return '/settings-group';
   return '';
 };
 
 const getBreadcrumbItems = (pathname: string) => {
-  if (pathname.startsWith('/dashboard')) return ['控制台'];
+  if (pathname.startsWith('/dashboard')) return ['驾驶舱'];
   if (pathname.startsWith('/agents/applications')) return ['代理管理', '申请审核'];
   if (pathname.startsWith('/agents/list')) return ['代理管理', '代理列表'];
   if (pathname.startsWith('/agents/')) return ['代理管理', '代理详情'];
@@ -99,6 +113,7 @@ const getBreadcrumbItems = (pathname: string) => {
   if (pathname.startsWith('/prompts/list')) return ['Prompt管理', 'Prompt列表'];
   if (pathname.includes('/edit')) return ['Prompt管理', 'Prompt编辑'];
   if (pathname.includes('/versions')) return ['Prompt管理', '版本管理'];
+  if (pathname.startsWith('/settings/admins')) return ['系统设置', '管理员管理'];
   if (pathname.startsWith('/settings')) return ['系统设置'];
   return ['页面'];
 };
@@ -108,6 +123,9 @@ const AdminLayout = () => {
   const { pathname } = useLocation();
   const screens = Grid.useBreakpoint();
   const { themeMode, setThemeMode } = useThemeStore();
+  const currentUser = React.useMemo(() => getStoredAdminUser(), []);
+  const allowSuperAdminFeatures = isSuperAdmin(currentUser);
+  const menuItems = React.useMemo(() => getMenuItems(allowSuperAdminFeatures), [allowSuperAdminFeatures]);
   const [collapsed, setCollapsed] = React.useState(false);
   const [openKeys, setOpenKeys] = React.useState<string[]>([]);
 
@@ -148,8 +166,8 @@ const AdminLayout = () => {
           </div>
           {!collapsed ? (
             <Space direction="vertical" size={0}>
-              <Typography.Text className="admin-logo__title">Career OS</Typography.Text>
-              <Typography.Text className="admin-logo__subtitle">职业规划报告系统</Typography.Text>
+              <Typography.Text className="admin-logo__title">Xinge OS</Typography.Text>
+              <Typography.Text className="admin-logo__subtitle">大学AI规划报告</Typography.Text>
             </Space>
           ) : null}
         </div>
@@ -191,7 +209,14 @@ const AdminLayout = () => {
             />
             <Space size={8}>
               <Avatar size="small" icon={<UserOutlined />} />
-              {!screens.xs ? <Typography.Text>运营管理员</Typography.Text> : null}
+              {!screens.xs ? (
+                <Space size={4}>
+                  <Typography.Text>{currentUser?.name || '管理员'}</Typography.Text>
+                  <Typography.Text type="secondary">
+                    {getAdminRoleLabel(currentUser?.roleCode || 'ADMIN')}
+                  </Typography.Text>
+                </Space>
+              ) : null}
             </Space>
             <Popconfirm
               title="确认退出登录？"

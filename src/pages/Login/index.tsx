@@ -15,13 +15,15 @@ import {
 import {
   UserOutlined,
   LockOutlined,
-  SafetyOutlined,
 } from '@ant-design/icons';
+import { useAdminAccountStore } from '@/store';
+import loginLogo from '../../../logo.png';
 
 const { Title, Text } = Typography;
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
+  const markLastLogin = useAdminAccountStore((state) => state.markLastLogin);
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
 
@@ -32,30 +34,44 @@ const LoginPage: React.FC = () => {
     setTimeout(() => {
       setLoading(false);
       
-      // Simple validation for demo
-      if (values.username === 'admin' && values.password === 'admin123') {
+      const adminUser = useAdminAccountStore
+        .getState()
+        .adminUsers.find((item) => item.username === values.username);
+
+      if (!adminUser || adminUser.passwordHash !== values.password) {
+        message.error('账号或密码错误');
+        return;
+      }
+
+      if (adminUser.status === 'disabled') {
+        message.error('账号已停用，请联系超级管理员');
+        return;
+      }
+
+      if (adminUser) {
         message.success('登录成功');
+        markLastLogin(adminUser.username);
         
         // Store login state
         if (values.remember) {
           localStorage.setItem('admin_token', 'mock_token_' + Date.now());
           localStorage.setItem('admin_user', JSON.stringify({
-            username: values.username,
-            name: '运营管理员',
-            role: 'admin',
+            id: adminUser.id,
+            username: adminUser.username,
+            name: adminUser.name,
+            roleCode: adminUser.roleCode,
           }));
         } else {
           sessionStorage.setItem('admin_token', 'mock_token_' + Date.now());
           sessionStorage.setItem('admin_user', JSON.stringify({
-            username: values.username,
-            name: '运营管理员',
-            role: 'admin',
+            id: adminUser.id,
+            username: adminUser.username,
+            name: adminUser.name,
+            roleCode: adminUser.roleCode,
           }));
         }
         
         navigate('/dashboard');
-      } else {
-        message.error('用户名或密码错误');
       }
     }, 1000);
   };
@@ -82,22 +98,31 @@ const LoginPage: React.FC = () => {
             <div style={{ textAlign: 'center', marginBottom: 32 }}>
               <div
                 style={{
-                  width: 64,
-                  height: 64,
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  borderRadius: 16,
+                  width: 72,
+                  height: 72,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   margin: '0 auto 16px',
+                  borderRadius: 20,
+                  boxShadow: '0 10px 24px rgba(15, 23, 42, 0.12)',
                 }}
               >
-                <SafetyOutlined style={{ fontSize: 32, color: '#fff' }} />
+                <img
+                  src={loginLogo}
+                  alt="信鸽系统 Logo"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: 20,
+                    display: 'block',
+                  }}
+                />
               </div>
               <Title level={3} style={{ marginBottom: 8 }}>
                 信鸽系统
               </Title>
-              <Text type="secondary">大学生职业规划报告管理后台</Text>
+              <Text type="secondary">大学AI规划报告管理后台</Text>
             </div>
 
             <Form
@@ -109,11 +134,11 @@ const LoginPage: React.FC = () => {
             >
               <Form.Item
                 name="username"
-                rules={[{ required: true, message: '请输入用户名' }]}
+                rules={[{ required: true, message: '请输入账号' }]}
               >
                 <Input
                   prefix={<UserOutlined />}
-                  placeholder="用户名"
+                  placeholder="请输入账号"
                 />
               </Form.Item>
 
@@ -123,7 +148,7 @@ const LoginPage: React.FC = () => {
               >
                 <Input.Password
                   prefix={<LockOutlined />}
-                  placeholder="密码"
+                  placeholder="请输入密码"
                 />
               </Form.Item>
 
@@ -132,7 +157,9 @@ const LoginPage: React.FC = () => {
                   <Form.Item name="remember" valuePropName="checked" noStyle>
                     <Checkbox>记住我</Checkbox>
                   </Form.Item>
-                  <a href="#">忘记密码？</a>
+                  <Text type="secondary" style={{ fontSize: 12 }}>
+                    密码重置请联系超级管理员
+                  </Text>
                 </Space>
               </Form.Item>
 
@@ -153,9 +180,14 @@ const LoginPage: React.FC = () => {
               </Form.Item>
 
               <div style={{ textAlign: 'center', marginTop: 16 }}>
-                <Text type="secondary" style={{ fontSize: 12 }}>
-                  演示账号：admin / admin123
-                </Text>
+                <Space direction="vertical" size={2}>
+                  <Text type="secondary" style={{ fontSize: 12 }}>
+                    超级管理员：admin / admin123
+                  </Text>
+                  <Text type="secondary" style={{ fontSize: 12 }}>
+                    非超级管理员：operator / operator123
+                  </Text>
+                </Space>
               </div>
             </Form>
           </Card>

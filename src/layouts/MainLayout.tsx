@@ -40,7 +40,7 @@ const MainLayout: React.FC = () => {
     {
       key: '/dashboard',
       icon: <DashboardOutlined />,
-      label: '控制台',
+      label: '驾驶舱',
     },
     {
       key: '/agents',
